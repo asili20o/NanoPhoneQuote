@@ -859,7 +859,7 @@ function selectBrand(brand) {
   const grid = document.getElementById('modelGrid');
   const models = Object.keys(PHONE_DATA[brand]);
   grid.innerHTML = models.map(m =>
-    `<button class="model-btn" onclick="selectModel('${m}')" id="model-${m.replace(/\s+/g,'-').replace(/"/g,'')}">${m}</button>`
+    `<button class="model-btn" onclick="selectModel('${m.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')" id="model-${m.replace(/\s+/g,'-').replace(/"/g,'')}">${m}</button>`
   ).join('');
 
   document.getElementById('storageGrid').innerHTML = '<div class="no-selection">Pick a model first</div>';
