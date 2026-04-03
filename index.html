@@ -350,21 +350,6 @@
   .submit-btn:hover { background: linear-gradient(135deg, #16a34a, #15803d); transform: translateY(-1px); }
   .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-  .excel-btn {
-    width: 100%;
-    padding: 14px;
-    margin-top: 10px;
-    border: 1px solid #166534;
-    border-radius: 10px;
-    background: #052e16;
-    color: #4ade80;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.3px;
-  }
-  .excel-btn:hover { background: #14532d; border-color: #22c55e; transform: translateY(-1px); }
 
   .back-btn {
     width: 100%;
@@ -710,10 +695,7 @@
       <button class="submit-btn" id="submitBtn" onclick="submitPurchase()">
         Submit to Google Sheets
       </button>
-      <button class="excel-btn" onclick="exportToExcel()">
-        ⬇ Export to Excel (.csv)
-      </button>
-      <button class="back-btn" onclick="switchTab('quote')">← Back to Quote</button>
+<button class="back-btn" onclick="switchTab('quote')">← Back to Quote</button>
     </div>
 
   </div>
@@ -1066,67 +1048,6 @@ function submitPurchase() {
     submitBtn.disabled = false;
     submitBtn.textContent = 'Submit to Google Sheets';
   });
-}
-
-// ==================== EXPORT TO EXCEL ====================
-
-function exportToExcel() {
-  const custName = document.getElementById('custName').value.trim();
-  const custPhone = document.getElementById('custPhone').value.trim();
-  const staff = document.getElementById('fStaff').value.trim();
-
-  if (!selectedBrand || !selectedModel || !selectedStorage || !selectedCondition) {
-    showToast('⚠️ Please complete the quote first');
-    return;
-  }
-
-  const pricePaid = document.getElementById('fPricePaid').value || currentOffer;
-  const notes = document.getElementById('fNotes').value.trim();
-  const status = document.getElementById('fStatus').value;
-  const imei = document.getElementById('fImei').value.trim();
-  const storageLabel = selectedStorage >= 1024 ? (selectedStorage / 1024) + 'TB' : selectedStorage + 'GB';
-  const brandLabels = { apple: 'iPhone', samsung: 'Samsung', ipad: 'iPad' };
-  const condLabels = { mint: 'Mint', good: 'Good', fair: 'Fair', poor: 'Poor' };
-
-  const today = new Date();
-  const dateStr = today.getFullYear() + '-' +
-    String(today.getMonth() + 1).padStart(2, '0') + '-' +
-    String(today.getDate()).padStart(2, '0');
-
-  function csvCell(val) {
-    const s = String(val === undefined || val === null ? '' : val);
-    if (s.includes(',') || s.includes('"') || s.includes('\n')) return '"' + s.replace(/"/g, '""') + '"';
-    return s;
-  }
-
-  const headers = ['Date','Customer Name','Phone','Brand','Model','Storage','Condition','Price Paid (CAD)','Est. Resale (CAD)','IMEI','Notes','Staff','Status'];
-  const row = [
-    dateStr,
-    custName,
-    custPhone,
-    brandLabels[selectedBrand],
-    selectedModel,
-    storageLabel,
-    condLabels[selectedCondition],
-    pricePaid,
-    currentResale,
-    imei,
-    notes,
-    staff,
-    status
-  ];
-
-  const csv = headers.map(csvCell).join(',') + '\r\n' + row.map(csvCell).join(',') + '\r\n';
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'NanoPhoneQuote_' + dateStr + '.csv';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast('✅ Downloaded as Excel CSV!');
 }
 
 // ==================== TOAST ====================
